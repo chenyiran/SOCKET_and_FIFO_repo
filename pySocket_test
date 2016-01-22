@@ -8,32 +8,49 @@ PORT = 8000
 
 reply = 'Yes'
 
+#For while loop usage infinity loop
+running = True
+
+
+# Open file to make receive log
+f1 = open('/home/alen/pyWriteFile_test.txt','w')
+
 # Configure socket
-s      = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s  = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
 
-# passively wait, 3: maximum number of connections in the queue
-s.listen(3)
-# accept and establish connection
-conn, addr = s.accept()
-# receive message
-request    = conn.recv(1024)
 
 
-print 'request is: ',request
-print 'Connected by', addr
+while running:
+
+	# passively wait, 3: maximum number of connections in the queue
+	s.listen(3)
+
+	# accept and establish connection
+	conn, addr = s.accept()
+
+	# receive message
+	request    = conn.recv(1024)
+
+	if request is not None:
+
+		#print the receive
+		print 'request is: ',request
+		print 'Connected by', addr
+	
+		# make receive log
+		f1.writelines(request)
+		
+		# send message
+		conn.sendall(reply)
+
+	# close connection
+	conn.close()
+		
+else:
+	#close file
+	f1.close()
+
+print 'Done'
 
 
-#================ Here is myselives code ====================
-
-f1 = open('/home/alen/pyWriteFile_test.txt','w')
-f1.writelines(request)
-f1.close()
-
-#=============== Above is myselives code ====================
-
-
-# send message
-conn.sendall(reply)
-# close connection
-conn.close()
